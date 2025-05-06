@@ -17,8 +17,8 @@ class Asisten extends Model
         return $this->hasMany(KehadiranAsisten::class);
     }
 
-    public function kelas()
+    public function praktikums()
     {
-        return $this->hasMany(KelasAsisten::class);
+        return $this->belongsToMany(Praktikum::class, 'kelas_asistens', 'asisten_id', 'praktikum_id');
     }
 }

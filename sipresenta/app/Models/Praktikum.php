@@ -10,7 +10,7 @@ class Praktikum extends Model
 {
     Use HasFactory, SoftDeletes;
 
-    protected $fillable = ['kelas', 'matkul', 'lab', 'waktu_mulai', 'waktu_selesai'];
+    protected $fillable = ['kelas', 'matkul', 'lab','hari', 'waktu_mulai', 'waktu_selesai'];
 
     public function pertemuans()
     {
@@ -25,5 +25,15 @@ class Praktikum extends Model
     public function kelasAsisten()
     {
         return $this->hasMany(KelasAsisten::class);
+    }
+
+    public function asistens()
+    {
+        return $this->belongsToMany(Asisten::class, 'kelas_asistens', 'praktikum_id', 'asisten_id');
+    }
+
+    public function praktikans()
+    {
+        return $this->belongsToMany(Praktikan::class, 'kelas_praktikans', 'praktikum_id', 'asisten_id');
     }
 }

@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PraktikanResource\Pages;
-use App\Filament\Resources\PraktikanResource\RelationManagers;
 use App\Models\Praktikan;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PraktikanResource extends Resource
 {
@@ -26,6 +23,13 @@ class PraktikanResource extends Resource
                 Forms\Components\TextInput::make('nama')->required(),
                 Forms\Components\TextInput::make('nim')->required(),
                 Forms\Components\TextInput::make('fingerprint_id')->required(),
+                Forms\Components\Select::make('praktikums')
+                    ->label('Praktikum')
+                    ->relationship('praktikums', 'matkul')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->matkul} - {$record->kelas}")
+                    ->multiple()
+                    ->preload()
+                    ->searchable(),
             ]);
     }
 
@@ -36,10 +40,22 @@ class PraktikanResource extends Resource
                 Tables\Columns\TextColumn::make('nama'),
                 Tables\Columns\TextColumn::make('nim'),
                 Tables\Columns\TextColumn::make('fingerprint_id'),
+                Tables\Columns\TextColumn::make('praktikums')
+                    ->label('Praktikum')
+                    ->html()
+                    ->alignCenter()
+                    ->formatStateUsing(fn ($state, $record) =>
+                        $record->praktikums->isNotEmpty()
+                            ? '<div class="flex justify-center items-center h-full">
+                                    <a href="' . route('filament.admin.resources.praktikans.view-kelas', ['record' => $record->id]) . '" 
+                                       class="inline-flex items-center px-2 py-1 text-xs font-medium text-white bg-primary-600 rounded hover:bg-primary-700">
+                                        Detail
+                                    </a>
+                               </div>'
+                            : '-'
+                    ),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -52,9 +68,7 @@ class PraktikanResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -63,6 +77,7 @@ class PraktikanResource extends Resource
             'index' => Pages\ListPraktikans::route('/'),
             'create' => Pages\CreatePraktikan::route('/create'),
             'edit' => Pages\EditPraktikan::route('/{record}/edit'),
+            'view-kelas' => Pages\ViewKelasPraktikan::route('/{record}/view-kelas'),
         ];
     }
 }

@@ -26,6 +26,17 @@ class PraktikumResource extends Resource
                 Forms\Components\TextInput::make('kelas')->required(),
             Forms\Components\TextInput::make('matkul')->required(),
             Forms\Components\TextInput::make('lab')->required(),
+            Forms\Components\Select::make('hari')
+                    ->label('Hari')
+                    ->options([
+                        'Senin' => 'Senin',
+                        'Selasa' => 'Selasa',
+                        'Rabu' => 'Rabu',
+                        'Kamis' => 'Kamis',
+                        'Jumat' => 'Jumat',
+                        'Sabtu' => 'Sabtu',
+                    ])
+                    ->required(),
             Forms\Components\TimePicker::make('waktu_mulai')->required(),
             Forms\Components\TimePicker::make('waktu_selesai')->required(),
             ]);
@@ -38,6 +49,7 @@ class PraktikumResource extends Resource
                 Tables\Columns\TextColumn::make('kelas'),
             Tables\Columns\TextColumn::make('matkul'),
             Tables\Columns\TextColumn::make('lab'),
+            Tables\Columns\TextColumn::make('hari')->label('Hari'),
             Tables\Columns\TextColumn::make('waktu_mulai'),
             Tables\Columns\TextColumn::make('waktu_selesai'),
             ])

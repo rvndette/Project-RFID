@@ -26,6 +26,13 @@ class AsistenResource extends Resource
                 Forms\Components\TextInput::make('nama')->required(),
             Forms\Components\TextInput::make('nim')->required(),
             Forms\Components\TextInput::make('rfid_id')->required(),
+            Forms\Components\Select::make('praktikums')
+                ->label('Praktikum')
+                ->relationship('praktikums', 'matkul')
+                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->matkul} - {$record->kelas}") // kolom yang ditampilkan di dropdown
+                ->multiple()
+                ->preload()
+                ->searchable(),
             ]);
     }
 
@@ -36,6 +43,20 @@ class AsistenResource extends Resource
                 Tables\Columns\TextColumn::make('nama'),
             Tables\Columns\TextColumn::make('nim'),
             Tables\Columns\TextColumn::make('rfid_id'),
+            Tables\Columns\TextColumn::make('praktikums.matkul')
+            ->label('Praktikum')
+            ->html()
+            ->alignCenter() // <-- untuk menengahkan secara horizontal
+            ->formatStateUsing(fn ($state, $record) =>
+                $record->praktikums->isNotEmpty()
+                    ? '<div class="flex justify-center items-center h-full">
+                            <a href="' . route('filament.admin.resources.asistens.view-kelas-asisten', ['record' => $record->id]) . '" 
+                               class="inline-flex items-center px-2 py-1 text-xs font-medium text-white bg-primary-600 rounded hover:bg-primary-700">
+                                Detail
+                            </a>
+                       </div>'
+                    : '-'
+            ),
             ])
             ->filters([
                 //
@@ -63,6 +84,7 @@ class AsistenResource extends Resource
             'index' => Pages\ListAsistens::route('/'),
             'create' => Pages\CreateAsisten::route('/create'),
             'edit' => Pages\EditAsisten::route('/{record}/edit'),
+            'view-kelas-asisten' => Pages\ViewKelasAsisten::route('/{record}/view-kelas-asisten'),
         ];
     }
 }

@@ -17,8 +17,8 @@ class Praktikan extends Model
         return $this->hasMany(KehadiranPraktikan::class);
     }
 
-    public function kelas()
+    public function praktikums()
     {
-        return $this->hasMany(KelasPraktikan::class);
+        return $this->belongsToMany(Praktikum::class, 'kelas_praktikans', 'praktikan_id', 'praktikum_id');
     }
 }
